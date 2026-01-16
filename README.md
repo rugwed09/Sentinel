@@ -10,7 +10,7 @@ Sentinel monitors your ML models in production and automatically:
 - Identifies root causes (data drift, feature issues, etc.)
 - Provides actionable insights to fix problems
 
-## Key Features
+## Key Features 
 
 - **Drift Detection**: Statistical tests to catch data distribution changes
   - KS Test for continuous features
