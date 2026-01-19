@@ -55,7 +55,7 @@ class DriftDetector:
             'test': 'KS',
             'statistic': float(statistic),
             'p_value': float(p_value),
-            'drift_detected': p_value < self.significance_level
+            'drift_detected': bool(p_value < self.significance_level)
         }
     
     def calculate_psi(self, feature: str, bins: int = 10) -> Dict:
@@ -63,30 +63,25 @@ class DriftDetector:
         ref_data = self.reference_data[feature].dropna()
         prod_data = self.production_data[feature].dropna()
         
-        # Create bins based on reference data
         breakpoints = np.percentile(ref_data, np.linspace(0, 100, bins + 1))
         breakpoints = np.unique(breakpoints)
         
-        # Count samples in each bin
         ref_counts = np.histogram(ref_data, bins=breakpoints)[0]
         prod_counts = np.histogram(prod_data, bins=breakpoints)[0]
         
-        # Calculate percentages
         ref_percents = ref_counts / len(ref_data)
         prod_percents = prod_counts / len(prod_data)
         
-        # Avoid division by zero
         ref_percents = np.where(ref_percents == 0, 0.0001, ref_percents)
         prod_percents = np.where(prod_percents == 0, 0.0001, prod_percents)
         
-        # PSI formula
         psi_values = (prod_percents - ref_percents) * np.log(prod_percents / ref_percents)
         psi = np.sum(psi_values)
         
         return {
             'test': 'PSI',
             'psi_value': float(psi),
-            'drift_detected': psi >= self.psi_threshold
+            'drift_detected': bool(psi >= self.psi_threshold)
         }
     
     def chi_square_test(self, feature: str) -> Dict:
@@ -94,14 +89,11 @@ class DriftDetector:
         ref_data = self.reference_data[feature].dropna()
         prod_data = self.production_data[feature].dropna()
         
-        # Get all unique categories
         all_categories = set(ref_data.unique()) | set(prod_data.unique())
         
-        # Count occurrences
         ref_counts = ref_data.value_counts()
         prod_counts = prod_data.value_counts()
         
-        # Create contingency table
         contingency = []
         for cat in all_categories:
             contingency.append([
@@ -111,14 +103,13 @@ class DriftDetector:
         
         contingency = np.array(contingency).T
         
-        # Chi-square test
         chi2_stat, p_value, _, _ = chi2_contingency(contingency)
         
         return {
             'test': 'Chi-Square',
             'statistic': float(chi2_stat),
             'p_value': float(p_value),
-            'drift_detected': p_value < self.significance_level
+            'drift_detected': bool(p_value < self.significance_level)
         }
     
     def detect_drift(self) -> Dict:
@@ -129,12 +120,11 @@ class DriftDetector:
             'feature_details': {}
         }
         
-        # Test continuous features with both KS and PSI
         for feature in self.continuous_features:
             ks_result = self.ks_test(feature)
             psi_result = self.calculate_psi(feature)
             
-            drift = ks_result['drift_detected'] or psi_result['drift_detected']
+            drift = bool(ks_result['drift_detected'] or psi_result['drift_detected'])
             
             results['feature_details'][feature] = {
                 'type': 'continuous',
@@ -147,14 +137,13 @@ class DriftDetector:
                 results['features_with_drift'].append(feature)
                 results['drift_detected'] = True
         
-        # Test categorical features with chi-square
         for feature in self.categorical_features:
             chi_result = self.chi_square_test(feature)
             
             results['feature_details'][feature] = {
                 'type': 'categorical',
                 'chi_square': chi_result,
-                'drift_detected': chi_result['drift_detected']
+                'drift_detected': bool(chi_result['drift_detected'])
             }
             
             if chi_result['drift_detected']:
