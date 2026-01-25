@@ -209,17 +209,6 @@ if results['drift_detected']:
 | Root Cause Analysis | 🚧 Planned |
 | Cloud Deployment | 🚧 Planned |
 
-## Roadmap
-
-- [ ] Add comprehensive unit tests (pytest)
-- [ ] Implement slice discovery algorithm
-- [ ] Add feature attribution tracking
-- [ ] Create automated alerting (Slack/email)
-- [ ] Add historical drift tracking
-- [ ] Deploy to AWS/Heroku
-- [ ] Add CI/CD pipeline
-- [ ] Write technical blog post
-
 ## Contributing
 
 This is a portfolio project demonstrating production ML monitoring capabilities. Feedback and suggestions are welcome!
