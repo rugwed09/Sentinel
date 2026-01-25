@@ -177,6 +177,11 @@ if results['drift_detected']:
 - **Plotly** - Interactive visualizations
 - **Docker** - Containerization
 
+## Actual Screenshots
+<img width="1067" height="740" alt="image" src="https://github.com/user-attachments/assets/8609c19d-6fc1-40d6-9ca2-9a80e282295f" />
+
+<img width="849" height="1167" alt="image" src="https://github.com/user-attachments/assets/2a488d79-263e-4bc1-b0a8-b51bc7c3ca1a" />
+
 ## Use Cases
 
 **Banking & FinTech:**
